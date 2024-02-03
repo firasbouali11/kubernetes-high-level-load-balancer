@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent
+  namespace: load-balancer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent
+  template:
+    metadata:
+      labels:
+        app: agent
+    spec:
+      containers:
+        - name: agent
+          image: firas124578/agent
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: SERVER_TRIGGER_HOST
+              value: server-service
+            - name: A1
+              value: "0.5"
+            - name: A2
+              value: "0.2"
+            - name: A3
+              value: "0.3"
+            - name: NODE_IP
+              value: "10.3.12.5,10.3.12.116,10.3.12.227,10.3.13.82,10.3.13.193,10.3.14.48,10.3.14.161,10.3.12.114"
+            - name: NODE_PORT
+              value: "31194"
+          ports:
+            - containerPort: 3333
+          volumeMounts:
+            - mountPath: /conf
+              name: config-pvv
+      volumes:
+        - name: config-pvv
+          persistentVolumeClaim:
+            claimName: config-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-service
+  namespace: load-balancer
+spec:
+  selector:
+    app: agent
+  ports:
+    - port: 3333
+      targetPort: 3333

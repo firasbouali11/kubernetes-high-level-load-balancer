@@ -1,0 +1,46 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pod-reader-role
+  namespace: load-balancer
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - list
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - list
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - list
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pod-reader-sa
+  namespace: load-balancer
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pod-reader-binding
+  namespace: load-balancer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pod-reader-role
+subjects:
+  - kind: ServiceAccount
+    name: pod-reader-sa
+    namespace: load-balancer

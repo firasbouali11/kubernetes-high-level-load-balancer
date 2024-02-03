@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery
+  namespace: load-balancer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discovery
+  template:
+    metadata:
+      labels:
+        app: discovery
+    spec:
+      serviceAccountName: pod-reader-sa
+      containers:
+        - name: discovery
+          image: firas124578/sd
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+# ---
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: discovery
+#   labels:
+#     name: discovery
+# spec:
+#   serviceAccountName: pod-reader-sa
+#   containers:
+#     - name: discovery
+#       image: firas124578/sd
+#       env:
+#         - name: REDIS_HOST
+#           value: redis-service
+#       resources:
+#         limits:
+#           memory: "128Mi"
+#           cpu: "500m"

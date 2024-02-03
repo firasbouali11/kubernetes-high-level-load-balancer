@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: config-pv
+  namespace: load-balancer
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  # persistentVolumeReclaimPolicy: Recycle
+  storageClassName: default
+  hostPath:
+    path: /data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config-pvc
+  namespace: load-balancer
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteMany
